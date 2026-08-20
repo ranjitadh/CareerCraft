@@ -1,0 +1,101 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: packages/web/Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./packages/web:/app
+      - web_node_modules:/app/node_modules
+      - resumeforge_storage:/app/storage
+    networks:
+      - resumeforge_network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: resumeforge
+      POSTGRES_PASSWORD: resumeforge
+      POSTGRES_DB: resumeforge
+    volumes:
+      - resumeforge_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U resumeforge -d resumeforge"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - resumeforge_network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - resumeforge_redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - resumeforge_network
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: packages/worker/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - resumeforge_storage:/storage
+    networks:
+      - resumeforge_network
+    restart: unless-stopped
+
+  latex-compiler:
+    build:
+      context: ./packages/latex-compiler
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - resumeforge_storage:/app/storage
+    networks:
+      - resumeforge_network
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256m
+    restart: unless-stopped
+
+volumes:
+  resumeforge_pgdata:
+  resumeforge_redisdata:
+  resumeforge_storage:
+  web_node_modules:
+
+networks:
+  resumeforge_network:
+    driver: bridge

@@ -1,0 +1,244 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Auth ────────────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  name         String?
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  profile     UserProfile?
+  experiences Experience[]
+  education   Education[]
+  skills      Skill[]
+  projects    Project[]
+  certifications Certification[]
+  languages   Language[]
+  resumes     Resume[]
+  auditLogs   AuditLog[]
+
+  @@index([email])
+}
+
+// ─── Profile ─────────────────────────────────────────────────────────────────
+
+model UserProfile {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  professionalHeadline String?
+  email              String?
+  phone              String?
+  location           String?
+  linkedinUrl        String?
+  portfolioUrl       String?
+  githubUrl          String?
+  professionalSummary String?  @db.Text
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ─── Experience ──────────────────────────────────────────────────────────────
+
+model Experience {
+  id                  String   @id @default(cuid())
+  userId              String
+  company             String
+  title               String
+  location            String?
+  startDate           DateTime
+  endDate             DateTime?
+  isCurrent           Boolean  @default(false)
+  originalDescription String   @db.Text
+  achievements        Json     @default("[]")
+  sortOrder           Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ─── Education ───────────────────────────────────────────────────────────────
+
+model Education {
+  id          String    @id @default(cuid())
+  userId      String
+  institution String
+  degree      String
+  fieldOfStudy String
+  startDate   DateTime
+  endDate     DateTime?
+  description String?   @db.Text
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ─── Skills ──────────────────────────────────────────────────────────────────
+
+model Skill {
+  id        String  @id @default(cuid())
+  userId    String
+  name      String
+  category  String
+  level     String?
+  sortOrder Int     @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ─── Projects ────────────────────────────────────────────────────────────────
+
+model Project {
+  id           String   @id @default(cuid())
+  userId       String
+  name         String
+  description  String   @db.Text
+  url          String?
+  technologies Json     @default("[]")
+  startDate    DateTime
+  endDate      DateTime?
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ─── Certifications ──────────────────────────────────────────────────────────
+
+model Certification {
+  id            String    @id @default(cuid())
+  userId        String
+  name          String
+  issuer        String
+  issueDate     DateTime
+  credentialUrl String?
+  expiryDate    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ─── Languages ───────────────────────────────────────────────────────────────
+
+model Language {
+  id          String @id @default(cuid())
+  userId      String
+  name        String
+  proficiency String
+  sortOrder   Int    @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ─── Resume ──────────────────────────────────────────────────────────────────
+
+model Resume {
+  id                     String   @id @default(cuid())
+  userId                 String
+  name                   String
+  companyName            String?
+  targetRole             String?
+  jobDescription         String   @db.Text
+  template               String   @default("classic-professional")
+  status                 String   @default("draft")
+  keywordAlignmentScore  Float?
+  currentVersionId       String?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  versions        ResumeVersion[]
+  jobAnalysis     JobAnalysis?
+
+  @@index([userId])
+  @@index([status])
+}
+
+// ─── Resume Versions ─────────────────────────────────────────────────────────
+
+model ResumeVersion {
+  id              String   @id @default(cuid())
+  resumeId        String
+  versionNumber   Int
+  analysis        Json?
+  resumeContent   Json?
+  latexSourcePath String?
+  pdfPath         String?
+  compileStatus   String   @default("pending")
+  compileError    String?  @db.Text
+  createdAt       DateTime @default(now())
+
+  resume Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  @@index([resumeId])
+  @@unique([resumeId, versionNumber])
+}
+
+// ─── Job Analysis ────────────────────────────────────────────────────────────
+
+model JobAnalysis {
+  id                 String   @id @default(cuid())
+  resumeId           String   @unique
+  targetRole         String
+  seniority          String?
+  industry           String?
+  requiredSkills     Json     @default("[]")
+  preferredSkills    Json     @default("[]")
+  keywords           Json     @default("[]")
+  responsibilities   Json     @default("[]")
+  actionVerbs        Json     @default("[]")
+  supportedKeywords  Json     @default("[]")
+  unsupportedKeywords Json   @default("[]")
+  profileMatchScore  Float?
+  createdAt          DateTime @default(now())
+
+  resume Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  @@index([resumeId])
+}
+
+// ─── Audit Log ───────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String
+  entityType String
+  entityId   String
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}

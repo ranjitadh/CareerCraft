@@ -1,0 +1,19 @@
+{
+  "name": "resumeforge-ai",
+  "private": true,
+  "scripts": {
+    "dev": "docker compose up --build",
+    "dev:web": "cd packages/web && npm run dev",
+    "dev:worker": "cd packages/worker && npm run dev",
+    "build": "docker compose build",
+    "down": "docker compose down",
+    "clean": "docker compose down -v",
+    "migrate": "cd packages/web && npx prisma migrate deploy",
+    "migrate:dev": "cd packages/web && npx prisma migrate dev",
+    "seed": "cd packages/web && npx tsx prisma/seed.ts",
+    "test": "cd packages/web && npm test",
+    "test:e2e": "cd packages/web && npx playwright test",
+    "lint": "cd packages/web && npm run lint",
+    "typecheck": "cd packages/web && npx tsc --noEmit"
+  }
+}

@@ -1,0 +1,59 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+% Custom commands
+\newcommand{\resumeSection}[1]{\section*{\textbf{#1}}}
+\newcommand{\resumeEntry}[4]{%
+  \textbf{#1} \hfill #2 \\
+  \textit{#3} \hfill \textit{#4} \vspace{2pt}
+}
+\newcommand{\resumeItem}[1]{\item #1}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+
+% Section formatting with divider lines
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\hrule height 0.5pt]
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+
+\begin{document}
+
+% HEADER
+\begin{center}
+  {\LARGE \textbf{%%NAME%%}} \\[4pt]
+  {\small %%EMAIL%% $|$ %%PHONE%% $|$ %%LOCATION%%} \\[2pt]
+  {\small %%LINKEDIN%% $|$ %%GITHUB%%}
+\end{center}
+
+\vspace{4pt}
+
+% PROFESSIONAL SUMMARY
+%%SUMMARY_SECTION%%
+
+% CORE SKILLS
+%%SKILLS_SECTION%%
+
+% EXPERIENCE
+%%EXPERIENCE_SECTION%%
+
+% PROJECTS
+%%PROJECTS_SECTION%%
+
+% EDUCATION
+%%EDUCATION_SECTION%%
+
+% CERTIFICATIONS
+%%CERTIFICATIONS_SECTION%%
+
+% LANGUAGES
+%%LANGUAGES_SECTION%%
+
+\end{document}

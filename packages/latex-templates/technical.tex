@@ -1,0 +1,68 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=0.6in]{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+
+% Custom commands
+\newcommand{\resumeSection}[1]{\section*{\textbf{#1}}}
+\newcommand{\resumeEntry}[4]{%
+  \textbf{#1} \hfill #2 \\
+  \textit{#3} \hfill \textit{#4} \vspace{2pt}
+}
+\newcommand{\resumeItem}[1]{\item #1}
+\newcommand{\techSkill}[2]{\texttt{#1} \hfill \textit{#2} \\}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+
+% Compact section spacing
+\titleformat{\section}{\normalsize\bfseries}{}{0em}{}[\hrule height 0.4pt]
+\titlespacing*{\section}{0pt}{8pt}{4pt}
+
+% Listings style for technical content
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=none,
+  columns=fullflexible,
+}
+
+\begin{document}
+
+% HEADER
+\begin{center}
+  {\Large \textbf{%%NAME%%}} \\[3pt]
+  {\footnotesize %%EMAIL%% $|$ %%PHONE%% $|$ %%LOCATION%%} \\[2pt]
+  {\footnotesize %%LINKEDIN%% $|$ %%GITHUB%%}
+\end{center}
+
+\vspace{3pt}
+
+% PROFESSIONAL SUMMARY
+%%SUMMARY_SECTION%%
+
+% CORE SKILLS
+%%SKILLS_SECTION%%
+
+% EXPERIENCE
+%%EXPERIENCE_SECTION%%
+
+% PROJECTS
+%%PROJECTS_SECTION%%
+
+% EDUCATION
+%%EDUCATION_SECTION%%
+
+% CERTIFICATIONS
+%%CERTIFICATIONS_SECTION%%
+
+% LANGUAGES
+%%LANGUAGES_SECTION%%
+
+\end{document}

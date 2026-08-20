@@ -1,0 +1,12 @@
+node_modules
+.next
+.env
+.env.local
+storage
+*.pdf
+*.tex
+dist
+.git
+playwright-report
+test-results
+coverage

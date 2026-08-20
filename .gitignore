@@ -1,0 +1,11 @@
+node_modules/
+.next/
+.env
+.env.*
+storage/
+*.pdf
+dist/
+.turbo/
+playwright-report/
+test-results/
+coverage/
