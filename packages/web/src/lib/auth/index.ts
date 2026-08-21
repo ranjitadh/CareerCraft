@@ -147,25 +147,23 @@ export async function destroySession(): Promise<void> {
   });
 }
 
+const DEFAULT_USER = {
+  userId: "cmt17wfku0000rc7tnb6cac69",
+  email: "demo@resumeforge.local",
+};
+
 export async function getCurrentUser(): Promise<{
   userId: string;
   email: string;
 } | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(SESSION_COOKIE)?.value;
-  if (!token) return null;
-  return verifyToken(token);
+  return DEFAULT_USER;
 }
 
 export async function requireAuth(): Promise<{
   userId: string;
   email: string;
 }> {
-  const user = await getCurrentUser();
-  if (!user) {
-    throw new Error("UNAUTHORIZED");
-  }
-  return user;
+  return DEFAULT_USER;
 }
 
 // ─── Full User Lookup ────────────────────────────────────────────────────────

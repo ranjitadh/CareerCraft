@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Loader2, Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Loader2, ArrowUpRight } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 const loginSchema = z.object({
@@ -18,7 +18,6 @@ type LoginInput = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
   const router = useRouter()
-  const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   const {
@@ -60,69 +59,56 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Sign in to ResumeForge</h1>
-        <p className="text-muted-foreground mt-2 text-sm">
+    <div className="space-y-10">
+      <div className="border-b hairline pb-8">
+        <p className="font-mono-label text-accent mb-3">Sign In</p>
+        <h1 className="font-display text-4xl font-semibold tracking-tight">
+          Welcome back.
+        </h1>
+        <p className="text-muted-foreground mt-3 text-sm">
           Enter your credentials to access your account
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-2">
-          <label htmlFor="email" className="text-sm font-medium">
+          <label htmlFor="email" className="font-mono-label block">
             Email
           </label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              className="w-full h-11 pl-10 pr-4 rounded-lg bg-background border border-input text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-              {...register('email')}
-            />
-          </div>
+          <input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            className="w-full h-12 px-4 bg-background border border-input text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+            {...register('email')}
+          />
           {errors.email && (
             <p className="text-destructive text-xs mt-1">{errors.email.message}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="password" className="text-sm font-medium">
+          <label htmlFor="password" className="font-mono-label block">
             Password
           </label>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Enter your password"
-              className="w-full h-11 pl-10 pr-11 rounded-lg bg-background border border-input text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-              {...register('password')}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-              tabIndex={-1}
-            >
-              {showPassword ? (
-                <EyeOff className="w-4 h-4" />
-              ) : (
-                <Eye className="w-4 h-4" />
-              )}
-            </button>
-          </div>
+          <input
+            id="password"
+            type="password"
+            placeholder="Enter your password"
+            className="w-full h-12 px-4 bg-background border border-input text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+            {...register('password')}
+          />
           {errors.password && (
-            <p className="text-destructive text-xs mt-1">{errors.password.message}</p>
+            <p className="text-destructive text-xs mt-1">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full h-11 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+          className="w-full h-12 bg-primary text-primary-foreground font-mono-label hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity flex items-center justify-center gap-2"
         >
           {isLoading ? (
             <>
@@ -130,7 +116,9 @@ export default function LoginPage() {
               Signing in...
             </>
           ) : (
-            'Sign in'
+            <>
+              Sign In <ArrowUpRight className="w-4 h-4" />
+            </>
           )}
         </button>
       </form>
@@ -139,7 +127,7 @@ export default function LoginPage() {
         Don&apos;t have an account?{' '}
         <Link
           href="/register"
-          className="text-primary font-medium hover:underline underline-offset-4"
+          className="text-foreground font-medium border-b border-foreground pb-0.5 hover:text-accent hover:border-accent transition-colors"
         >
           Create one
         </Link>

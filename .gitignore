@@ -1,7 +1,5 @@
 node_modules/
 .next/
-.env
-.env.*
 storage/
 *.pdf
 dist/
@@ -9,3 +7,4 @@ dist/
 playwright-report/
 test-results/
 coverage/
+config.bat

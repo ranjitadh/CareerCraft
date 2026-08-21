@@ -8,21 +8,22 @@ vi.mock('next/headers', () => ({
   })),
 }))
 
+import { NextRequest } from 'next/server'
 import { POST as registerPOST } from '@/app/api/auth/register/route'
 import { POST as loginPOST } from '@/app/api/auth/login/route'
 import { POST as logoutPOST } from '@/app/api/auth/logout/route'
 import { GET as meGET } from '@/app/api/auth/me/route'
 
-function makeRequest(body: unknown, method = 'POST'): Request {
-  return new Request('http://localhost/api/auth/register', {
+function makeRequest(body: unknown, method = 'POST'): NextRequest {
+  return new NextRequest('http://localhost/api/auth/register', {
     method,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
 }
 
-function makeGetRequest(): Request {
-  return new Request('http://localhost/api/auth/me', { method: 'GET' })
+function makeGetRequest(): NextRequest {
+  return new NextRequest('http://localhost/api/auth/me', { method: 'GET' })
 }
 
 describe('POST /api/auth/register', () => {

@@ -34,8 +34,6 @@ export default function WizardStep({
   children,
   className,
 }: WizardStepProps) {
-  if (stepKey !== currentStep) return null
-
   const direction = stepKey > currentStep ? 1 : -1
 
   return (

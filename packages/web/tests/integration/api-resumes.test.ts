@@ -50,6 +50,7 @@ vi.mock('@/lib/storage', () => ({
   createStorageDirectories: vi.fn().mockResolvedValue('/tmp/test-storage'),
 }))
 
+import { NextRequest } from 'next/server'
 import {
   GET as resumesGET,
   POST as resumesPOST,
@@ -64,11 +65,11 @@ function makeParams(id: string) {
   return { params: Promise.resolve({ id }) }
 }
 
-function makeRequest(body: unknown, method = 'POST'): Request {
-  return new Request('http://localhost/api/resumes', {
+function makeRequest(body?: unknown, method = 'POST'): NextRequest {
+  return new NextRequest('http://localhost/api/resumes', {
     method,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: body !== undefined ? JSON.stringify(body) : undefined,
   })
 }
 
@@ -252,7 +253,7 @@ describe('DELETE /api/resumes/[id]', () => {
     } as any)
     vi.mocked(prisma.resume.delete).mockResolvedValue({} as any)
 
-    const req = new Request('http://localhost/api/resumes/resume-1', { method: 'DELETE' })
+    const req = new NextRequest('http://localhost/api/resumes/resume-1', { method: 'DELETE' })
     const res = await resumeDELETE(req, makeParams('resume-1'))
     const json = await res.json()
 
@@ -264,7 +265,7 @@ describe('DELETE /api/resumes/[id]', () => {
   it('returns 404 for non-existent resume', async () => {
     vi.mocked(prisma.resume.findUnique).mockResolvedValue(null)
 
-    const req = new Request('http://localhost/api/resumes/nonexistent', { method: 'DELETE' })
+    const req = new NextRequest('http://localhost/api/resumes/nonexistent', { method: 'DELETE' })
     const res = await resumeDELETE(req, makeParams('nonexistent'))
     expect(res.status).toBe(404)
   })

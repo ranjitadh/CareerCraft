@@ -7,6 +7,7 @@ import os from 'node:os'
 import { promisify } from 'node:util'
 
 const execFileAsync = promisify(execFile)
+const execAsync = promisify(require('node:child_process').exec)
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 
@@ -16,6 +17,7 @@ const STORAGE_PATH = process.env.STORAGE_PATH ?? '/storage'
 const COMPILE_TIMEOUT_MS =
   parseInt(process.env.LATEX_COMPILE_TIMEOUT ?? '30', 10) * 1000
 const CONCURRENCY = parseInt(process.env.WORKER_CONCURRENCY ?? '2', 10)
+const LATEX_CONTAINER = process.env.LATEX_COMPILER_CONTAINER ?? 'resume-latex-compiler-1'
 
 const connection = { host: REDIS_HOST, port: REDIS_PORT }
 
@@ -81,47 +83,42 @@ const latexWorker = new Worker<LatexCompileJobData>(
         data: { compileStatus: 'compiling' },
       })
 
-      // 3. Run pdflatex in isolated temp directory (twice for references)
-      for (let pass = 1; pass <= 2; pass++) {
-        await execFileAsync(
-          'pdflatex',
-          [
-            '-interaction=nonstopmode',
-            '-halt-on-error',
-            `-jobname=resume`,
-            texFilePath,
-          ],
-          {
-            cwd: tempDir,
-            timeout: COMPILE_TIMEOUT_MS,
-            maxBuffer: 10 * 1024 * 1024,
-            env: {
-              PATH: process.env.PATH,
-              HOME: tempDir,
-              TMPDIR: tempDir,
-              LANG: 'en_US.UTF-8',
-            },
-          }
-        )
+      // 3. Compile via latex-compiler container using docker exec
+      const storageDir = getStorageDir(userId, resumeId)
+      await fs.mkdir(storageDir, { recursive: true })
+      const compileDir = path.join(storageDir, `compile-${versionId}`)
+      await fs.mkdir(compileDir, { recursive: true })
+
+      const texFile = path.join(compileDir, 'resume.tex')
+      await fs.writeFile(texFile, latexSource, 'utf-8')
+
+      // The latex-compiler mounts the same volume at /app/storage
+      const containerInputPath = `/app/storage/resumes/${userId}/${resumeId}/compile-${versionId}/resume.tex`
+      const containerOutputDir = `/app/storage/resumes/${userId}/${resumeId}/compile-${versionId}`
+
+      const { stdout, stderr } = await execAsync(
+        `docker exec ${LATEX_CONTAINER} /compile/compile.sh resume.tex ${containerOutputDir} 30`,
+        {
+          timeout: COMPILE_TIMEOUT_MS,
+          maxBuffer: 10 * 1024 * 1024,
+        }
+      )
+      console.log(`[latex] compile output: ${stdout}`)
+
+      if (stdout.includes('COMPILATION_FAILED')) {
+        throw new Error(`LaTeX compilation failed: ${stderr || stdout}`)
       }
 
       // 4. Verify PDF was produced
-      const pdfName = 'resume.pdf'
-      const compiledPdf = path.join(tempDir, pdfName)
+      const pdfDest = path.join(storageDir, `version-${versionId}.pdf`)
 
       try {
-        await fs.access(compiledPdf)
+        await fs.access(pdfDest)
       } catch {
         throw new Error('LaTeX compilation did not produce a PDF output')
       }
 
-      // 5. Copy PDF to persistent storage
-      const storageDir = getStorageDir(userId, resumeId)
-      await fs.mkdir(storageDir, { recursive: true })
-      const pdfDest = path.join(storageDir, `version-${versionId}.pdf`)
-      await fs.copyFile(compiledPdf, pdfDest)
-
-      // 6. Update database with success
+      // 5. Update database with success
       await prisma.resumeVersion.update({
         where: { id: versionId },
         data: {

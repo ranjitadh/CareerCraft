@@ -1,75 +1,100 @@
+'use client'
+
+import Link from 'next/link'
+import { ArrowUpRight } from 'lucide-react'
+import { Marquee } from '@/components/ui/Marquee'
+
+const marqueeItems = [
+  'ART COMES FIRST',
+  'CRAFT YOUR STORY',
+  'ATS READY',
+  'AI POWERED',
+]
+
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen flex">
-      {/* Left brand panel - hidden on mobile */}
-      <div className="hidden lg:flex lg:w-1/2 bg-card border-r border-border flex-col justify-between p-12">
-        <div>
-          <div className="flex items-center gap-2.5 mb-16">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-              <span className="text-primary font-bold text-lg">R</span>
-            </div>
-            <span className="text-xl font-bold tracking-tight">
-              ResumeForge<span className="text-primary ml-1">AI</span>
-            </span>
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+      {/* Top bar */}
+      <header className="border-b hairline">
+        <div className="flex items-center justify-between px-5 lg:px-10 h-16">
+          <Link href="/" className="font-display text-xl font-bold tracking-tight">
+            ResumeForge<span className="text-accent">AI</span>
+          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/"
+              className="font-mono-label text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Home
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Content */}
+      <div className="flex-1 flex">
+        {/* Left brand panel */}
+        <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 border-r hairline">
+          <div>
+            <p className="font-mono-label text-accent mb-8">ResumeForge AI</p>
+            <h2 className="font-display text-display-md font-semibold leading-none">
+              Build resumes
+              <br />
+              that get
+              <br />
+              <span className="italic font-normal text-muted-foreground">
+                interviews
+              </span>
+            </h2>
           </div>
 
-          <h2 className="text-4xl font-bold tracking-tight leading-tight mb-6">
-            Build resumes that
-            <br />
-            <span className="text-primary">get interviews</span>
-          </h2>
-          <p className="text-muted-foreground text-lg leading-relaxed max-w-md">
-            AI-powered resume builder with real-time ATS scoring,
-            intelligent content suggestions, and professional LaTeX templates.
-          </p>
+          <div className="font-mono-label space-y-4 text-muted-foreground">
+            <div className="flex items-center gap-3">
+              <span className="text-accent">01</span>
+              <span>ATS Score Analysis</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-accent">02</span>
+              <span>AI Content Generation</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-accent">03</span>
+              <span>LaTeX Export</span>
+            </div>
+          </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex items-start gap-3">
-            <div className="w-6 h-6 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <div className="w-2 h-2 rounded-full bg-success" />
+        {/* Right content */}
+        <div className="flex-1 flex items-center justify-center px-6 py-16 sm:px-12">
+          <div className="w-full max-w-md">
+            {/* Mobile brand */}
+            <div className="lg:hidden mb-10">
+              <Link href="/" className="font-display text-xl font-bold tracking-tight">
+                ResumeForge<span className="text-accent">AI</span>
+              </Link>
             </div>
-            <p className="text-sm text-muted-foreground">
-              <span className="text-foreground font-medium">ATS Score Analysis</span> - Know your resume passes before you submit
-            </p>
-          </div>
-          <div className="flex items-start gap-3">
-            <div className="w-6 h-6 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <div className="w-2 h-2 rounded-full bg-success" />
-            </div>
-            <p className="text-sm text-muted-foreground">
-              <span className="text-foreground font-medium">AI Content Generation</span> - Professional bullet points and summaries
-            </p>
-          </div>
-          <div className="flex items-start gap-3">
-            <div className="w-6 h-6 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <div className="w-2 h-2 rounded-full bg-success" />
-            </div>
-            <p className="text-sm text-muted-foreground">
-              <span className="text-foreground font-medium">LaTeX Export</span> - Publication-quality PDF output
-            </p>
+            {children}
           </div>
         </div>
       </div>
 
-      {/* Right content panel */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-md">
-          {/* Mobile brand */}
-          <div className="lg:hidden flex items-center gap-2.5 mb-10">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-              <span className="text-primary font-bold text-lg">R</span>
-            </div>
-            <span className="text-xl font-bold tracking-tight">
-              ResumeForge<span className="text-primary ml-1">AI</span>
+      {/* Marquee footer */}
+      <div className="border-t hairline">
+        <Marquee speed={80} ariaLabel="auth footer marquee">
+          {[...marqueeItems, ...marqueeItems].map((item, i) => (
+            <span
+              key={i}
+              className="font-display text-2xl font-semibold px-6 py-4 flex items-center gap-6"
+            >
+              {item}
+              <ArrowUpRight className="w-5 h-5 text-accent" aria-hidden="true" />
             </span>
-          </div>
-          {children}
-        </div>
+          ))}
+        </Marquee>
       </div>
     </div>
   )

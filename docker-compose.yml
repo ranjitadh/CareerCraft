@@ -13,7 +13,6 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - ./packages/web:/app
       - web_node_modules:/app/node_modules
       - resumeforge_storage:/app/storage
     networks:
@@ -67,8 +66,13 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      latex-compiler:
+        condition: service_started
     volumes:
       - resumeforge_storage:/storage
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - LATEX_COMPILER_CONTAINER=resume-latex-compiler-1
     networks:
       - resumeforge_network
     restart: unless-stopped

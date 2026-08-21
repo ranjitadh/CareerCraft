@@ -40,6 +40,7 @@ vi.mock('@/lib/auth', async (importOriginal) => {
   }
 })
 
+import { NextRequest } from 'next/server'
 import { GET as profileGET, PUT as profilePUT } from '@/app/api/profile/route'
 import {
   GET as expGET,
@@ -50,11 +51,11 @@ import {
   DELETE as expIdDELETE,
 } from '@/app/api/profile/experience/[id]/route'
 
-function makeRequest(body: unknown, method = 'PUT'): Request {
-  return new Request('http://localhost/api/profile', {
+function makeRequest(body?: unknown, method = 'PUT'): NextRequest {
+  return new NextRequest('http://localhost/api/profile', {
     method,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: body !== undefined ? JSON.stringify(body) : undefined,
   })
 }
 
@@ -289,7 +290,7 @@ describe('DELETE /api/profile/experience/[id]', () => {
     } as any)
     vi.mocked(prisma.experience.delete).mockResolvedValue({} as any)
 
-    const req = new Request('http://localhost/api/profile/experience/exp-1', {
+    const req = new NextRequest('http://localhost/api/profile/experience/exp-1', {
       method: 'DELETE',
     })
 
@@ -301,7 +302,7 @@ describe('DELETE /api/profile/experience/[id]', () => {
   it('returns 404 for non-existent experience', async () => {
     vi.mocked(prisma.experience.findUnique).mockResolvedValue(null)
 
-    const req = new Request('http://localhost/api/profile/experience/nonexistent', {
+    const req = new NextRequest('http://localhost/api/profile/experience/nonexistent', {
       method: 'DELETE',
     })
 

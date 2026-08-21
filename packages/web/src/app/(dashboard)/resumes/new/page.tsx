@@ -269,7 +269,8 @@ export default function NewResumePage() {
       <div className="relative min-h-[500px]">
         <AnimatePresence mode="wait" custom={store.step}>
         {/* Step 1: Job Description */}
-        <WizardStep stepKey={1} currentStep={store.step}>
+        {store.step === 1 && (
+          <WizardStep key={1} stepKey={1} currentStep={store.step}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-5">
               <div className="rounded-xl border border-border bg-card p-6 space-y-5">
@@ -411,9 +412,11 @@ export default function NewResumePage() {
             </div>
           </div>
         </WizardStep>
+        )}
 
         {/* Step 2: Analysis Results */}
-        <WizardStep stepKey={2} currentStep={store.step}>
+        {store.step === 2 && (
+          <WizardStep key={2} stepKey={2} currentStep={store.step}>
           <div className="space-y-6">
             {store.analysis && (
               <>
@@ -634,9 +637,11 @@ export default function NewResumePage() {
             )}
           </div>
         </WizardStep>
+        )}
 
         {/* Step 3: Tailor Resume */}
-        <WizardStep stepKey={3} currentStep={store.step}>
+        {store.step === 3 && (
+          <WizardStep key={3} stepKey={3} currentStep={store.step}>
           <div className="space-y-6">
             {store.resumeContent && (
               <>
@@ -852,9 +857,11 @@ export default function NewResumePage() {
             )}
           </div>
         </WizardStep>
+        )}
 
         {/* Step 4: Review */}
-        <WizardStep stepKey={4} currentStep={store.step}>
+        {store.step === 4 && (
+          <WizardStep key={4} stepKey={4} currentStep={store.step}>
           <div className="space-y-6">
             {store.qualityCheck && (
               <>
@@ -1033,9 +1040,11 @@ export default function NewResumePage() {
             )}
           </div>
         </WizardStep>
+        )}
 
         {/* Step 5: Export */}
-        <WizardStep stepKey={5} currentStep={store.step}>
+        {store.step === 5 && (
+          <WizardStep key={5} stepKey={5} currentStep={store.step}>
           <div className="space-y-6">
             {/* Success state */}
             <motion.div
@@ -1202,6 +1211,7 @@ export default function NewResumePage() {
             </div>
           </div>
         </WizardStep>
+        )}
         </AnimatePresence>
       </div>
 

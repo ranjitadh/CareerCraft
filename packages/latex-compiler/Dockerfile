@@ -1,4 +1,4 @@
-FROM texlive/texlive:latest-minimal
+FROM debian:bookworm
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     texlive-latex-base \
@@ -12,4 +12,4 @@ WORKDIR /compile
 COPY compile.sh /compile/compile.sh
 RUN chmod +x /compile/compile.sh
 
-ENTRYPOINT ["/compile/compile.sh"]
+CMD ["sleep", "infinity"]
